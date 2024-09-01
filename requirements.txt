@@ -3,3 +3,5 @@ gradio
 langchain_google_vertexai
 #langchain
 python-dotenv
+langchain-core
+langchain-community
