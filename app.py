@@ -29,10 +29,25 @@ print(f"Setting Gradio server port to {os.getenv('GRADIO_SERVER_PORT')}")
 #llm = VertexAI(model_name="gemini-1.5-flash", project=PROJECT_ID)
 model = ChatVertexAI(model="gemini-1.5-flash", project=PROJECT_ID)
 
+store = {}
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = InMemoryChatMessageHistory()
+    return store[session_id]
+
+with_message_history = RunnableWithMessageHistory(model, get_session_history)
+
+config = {"configurable": {"session_id": "abc2"}} # dummy value; todo later
+
 def generate_response(message, history):
   #ans = rag_chain({"question": message, "chat_history": chat_history})["answer"]
   #ans = llm(message)
-  ans = model.invoke([HumanMessage(content=message)])
+  ans = with_message_history.invoke(
+    [HumanMessage(content=message)],
+    config=config,
+    )
+  #ans = model.invoke([HumanMessage(content=message)])
   return ans.content
 
 interface = gr.ChatInterface(fn=generate_response, examples=["Tell me about Chicago", "What was flying in the Concorde like?", "Where is the Bermuda Triangle?"], title="Chat Bot")
