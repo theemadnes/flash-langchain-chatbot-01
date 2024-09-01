@@ -1,0 +1,5 @@
+gradio
+#google-cloud-aiplatform
+langchain_google_vertexai
+#langchain
+python-dotenv
