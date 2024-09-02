@@ -50,4 +50,6 @@ def generate_response(message, history):
   return ans.content
 
 interface = gr.ChatInterface(fn=generate_response, examples=["Tell me about Chicago", "What was flying in the Concorde like?", "Where is the Bermuda Triangle?"], title="Chat Bot")
-interface.launch(server_name="0.0.0.0")
+
+if __name__ == "__main__":
+  interface.launch(server_name="0.0.0.0")
