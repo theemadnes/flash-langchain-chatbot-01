@@ -41,8 +41,8 @@ config = {"configurable": {"session_id": "abc2"}} # dummy value; todo later
 
 def generate_response(message, history):
   # not using the history variable, since we're using langchain stuff to store history
-  # print history store for debug
-  print(store)
+  #print(gr.State())
+  #print(history)
   ans = with_message_history.invoke(
     [HumanMessage(content=message)],
     config=config,
