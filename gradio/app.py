@@ -43,13 +43,14 @@ def generate_response(message, history):
   # not using the history variable, since we're using langchain stuff to store history
   #print(gr.State())
   #print(history)
+  #print(request.he)
   ans = with_message_history.invoke(
     [HumanMessage(content=message)],
     config=config,
     )
   return ans.content
 
-interface = gr.ChatInterface(fn=generate_response, examples=["Tell me about Chicago", "What was flying in the Concorde like?", "Where is the Bermuda Triangle?"], title="Chat Bot")
+interface = gr.ChatInterface(fn=generate_response, examples=["Tell me about Chicago", "What was flying in the Concorde like?", "Where is the Bermuda Triangle?"], title="Chat Bot")#, additional_inputs=gr.Request().session_hash)
 
 if __name__ == "__main__":
   interface.launch(server_name="0.0.0.0")
