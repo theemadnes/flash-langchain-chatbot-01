@@ -19,6 +19,8 @@ PROJECT_ID = os.environ.get('PROJECT_ID')   # @param {type:"string"}
 
 model = ChatVertexAI(model="gemini-1.5-flash", project=PROJECT_ID)
 
+store = {}
+
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
         store[session_id] = InMemoryChatMessageHistory()
@@ -30,38 +32,18 @@ config = {"configurable": {"session_id": "abc2"}} # dummy value; todo later
 
 st.title("Chat Bot")
 
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+def generate_response(input_text):
+    st.info(with_message_history.invoke(
+    [HumanMessage(content=input_text)],
+    config=config,
+    ).content)
 
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# Accept user input
-if prompt := st.chat_input("What is up?"):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        response = st.write_stream(response_generator())
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
-
-# Streamed response emulator
-def response_generator():
-    response = random.choice(
-        [
-            "Hello there! How can I assist you today?",
-            "Hi, human! Is there anything I can help you with?",
-            "Do you need help?",
-        ]
+with st.form("my_form"):
+    text = st.text_area(
+        "Enter text:",
+        "What are the three key pieces of advice for learning how to code?",
     )
-    for word in response.split():
-        yield word + " "
-        time.sleep(0.05)
+    submitted = st.form_submit_button("Submit")
+    if submitted:
+        generate_response(text)
+
